@@ -83,6 +83,7 @@ export function parseSizeRule(input) {
     if (multiplier === null) return null;
     const a = Math.round(Number(range[1]) * multiplier);
     const b = Math.round(Number(range[2]) * multiplier);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
     // The user may type the bounds the wrong way round.
     return { operator: "~", min: Math.min(a, b), max: Math.max(a, b) };
   }
@@ -94,7 +95,9 @@ export function parseSizeRule(input) {
 
   // No explicit operator means "at least this big", the cat-catch default.
   const operator = comparison[1] || ">=";
-  return { operator, size: Math.round(Number(comparison[2]) * multiplier) };
+  const size = Math.round(Number(comparison[2]) * multiplier);
+  if (!Number.isFinite(size)) return null;
+  return { operator, size };
 }
 
 /**
